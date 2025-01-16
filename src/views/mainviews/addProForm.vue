@@ -132,7 +132,6 @@ export default {
     async sendProData() {
       if (this.btnsids === "new") {
         // save product to db..
-
         // this.product.inv = parseInt(this.product.inv);
         // console.log(this.product.inv);
         // if (typeof this.product.inv === "number") {
@@ -143,24 +142,31 @@ export default {
         try {
           this.product.picname =
             document.querySelector(".input-upload").files[0];
-
-          await addNewProduct(this.product);
-          this.product = {};
+          // uncomment next lines when you want to execute proccess..
+          // await addNewProduct(this.product);
+          // this.product = {};
           // this.$emit("hideProForm");
+          this.$emit(
+            "renderMessage",
+            "this proccess can't complete becuase of using sub-domain"
+          );
         } catch (err) {
           // this.$emit('renderMessage','')
-          console.log("here");
-          console.log(err.message);
+          // console.log("here");
+          // console.log(err.message);
         }
       } else if (this.btnsids === "edit") {
-        // console.log("product must be edit...");
         // go to db and find this product and reverse..
         this.product.picname = document.querySelector(".input-upload").files[0];
-
-        await editProduct(this.product);
-        this.$emit("hideProForm");
+        // uncomment next lines when you want to execute proccess..
+        // await editProduct(this.product);
+        // this.$emit("hideProForm");
+        this.$emit(
+          "renderMessage",
+          "this proccess can't complete becuase of using sub-domain"
+        );
       } else {
-        console.log("just show not edit product...");
+        // console.log("just show not edit product...");
         // don't do any thing just leave...
         this.$emit("hideProForm");
       }
@@ -177,28 +183,17 @@ export default {
           this.readonly = true;
         }
       } catch (err) {
-        console.log(err);
+        // console.log(err);
       }
     } else {
       // donn't insert value to form.
       // make inputs enable edit.
       // when submit save product to db and return
-      console.log("add new product");
+      // console.log("add new product");
     }
   },
 };
 </script>
 
-<style  scoped>
-.input-info-form {
-  border: none;
-  border-bottom: 1px solid;
-  border-color: rgb(180, 180, 180);
-  /* border-radius: 8px; */
-  background-color: rgb(230, 230, 230);
-  height: 16px;
-  width: 90px;
-}
-</style>
 
 

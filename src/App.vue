@@ -46,6 +46,8 @@ export default {
   --gradient-primary-bluenav: linear-gradient(to top left, #9fc2dd, #5997c7);
   /* --gradient-primary-view-img: linear-gradient(to top left, #d76828, #dd6a6a); */
   --gradient-primary-view-img: linear-gradient(to top left, #9a28d7, #dd6aa0);
+  --nav-back: linear-gradient(to top left, #0b7ba0, #63c8e4);
+  --nav-back-lighter: linear-gradient(to top left, #2496bc, #7fd1e7);
 }
 
 body {
@@ -68,14 +70,13 @@ label {
   top: 7px;
   right: 7px;
   border: none;
-
   /* background-image: var(--gradient-primary-container); */
   background-color: rgb(230, 230, 230);
   cursor: pointer;
 }
 
 .cancel-icon {
-  height: 20px;
+  height: 15px;
 }
 
 .inner-get-info {
@@ -107,11 +108,18 @@ label {
   /* border: 1px solid; */
   border: 1.5px solid rgb(164, 164, 164);
   /* border-color: rgb(180, 180, 180); */
-  border-radius: 8px;
+  border-radius: 5px;
 
   height: 16px;
   width: 125px;
-  font-size: 12px;
+  font-size: 11px;
+}
+.input-info-form {
+  border-radius: 5px;
+  border: 1.5px solid rgb(164, 164, 164);
+  height: 16px;
+  width: 125px;
+  font-size: 11px;
 }
 
 .outer-lbl {
@@ -175,19 +183,32 @@ input[type="file"]::file-selector-button:hover {
 .message-div {
   width: 400px;
   height: 150px;
-  border: none;
   border-radius: 15px;
+  font-size: 14px;
 
   position: absolute;
-  background-color: rgba(86, 178, 104, 0.82);
+  /* background-color: rgba(86, 178, 104, 0.82); */
+  background-image: var(--nav-back);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  margin-top: 175px;
+  /* margin-top: 175px; */
+  padding: 0 3px 0 3px;
+  border: 2px solid white;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
   z-index: 50;
 }
-
+@media (min-width: 400px) and (max-width: 700px) {
+  .message-div {
+    width: 330px;
+  }
+}
+@media (max-width: 400px) {
+  .message-div {
+    width: 70%;
+  }
+}
 .error-message {
   background-color: rgb(227, 51, 51);
 }

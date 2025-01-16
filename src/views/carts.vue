@@ -1,7 +1,7 @@
 <template>
   <div class="outer-view-cart-div">
     <div class="view-carts-div">
-      <div class="exit-view-carts">
+      <div class="cart-date-total-header-div">
         <button class="btn-cancel-view-carts">
           <img
             class="cancel-icon"
@@ -9,11 +9,6 @@
             @click="this.$emit('hideCartsDetails')"
           />
         </button>
-      </div>
-      <!-- <div>
-            compobox
-            </div> -->
-      <div class="cart-date-total-header-div">
         <p class="cart-date-view-header">Date</p>
         <p class="cart-total-view-header">Total</p>
       </div>
@@ -25,14 +20,14 @@
           :key="cart.id"
         >
           <div class="cart-date-total-div" @click="this.toggleViewDetails">
-            <p class="cart-date-view">
+            <span class="cart-date-view">
               {{
                 new Intl.DateTimeFormat("en-US", options).format(
                   new Date(cart.date)
                 )
               }}
-            </p>
-            <p class="cart-total-view">
+            </span>
+            <span class="cart-total-view">
               {{
                 "$ " +
                 carts[i].serials.reduce(
@@ -40,7 +35,7 @@
                   (sum = 0)
                 )
               }}
-            </p>
+            </span>
 
             <img
               v-show="!cart.viewDet"
@@ -121,38 +116,38 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .outer-view-cart-div {
   display: flex;
   flex-direction: row;
   justify-content: center;
+  align-items: center;
 
   height: 100vh;
-  background-image: var(--gradient-primary);
+  /* background-image: var(--gradient-primary); */
 }
 
 .view-carts-div {
   /* height: 500px; */
-  width: 900px;
-  max-height: inherit;
-  min-height: 500px;
+  width: 800px;
+  height: 500px;
+
   background-color: rgb(230, 230, 230);
-  padding-top: 20px;
-
-  position: absolute;
-  top: 100px;
-  /* left: 250px; */
-
+  border: 2px solid white;
   border-radius: 15px;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 
   display: flex;
   flex-direction: column;
+  align-items: center;
+  justify-content: start;
 }
-
+.cancel-icon {
+  height: 16px;
+}
 .btn-cancel-view-carts {
   position: absolute;
-  top: 7px;
+  top: 8px;
   right: 7px;
 
   border: none;
@@ -162,20 +157,24 @@ export default {
 }
 
 .cart-date-total-header-div {
-  width: inhert;
-  height: 30px;
+  position: relative;
+  width: 100%;
+  height: 50px;
   display: flex;
-
-  margin: 0px 40px 15px 40px;
+  align-items: center;
+  justify-content: space-around;
+  /* margin: 0px 40px 15px 40px; */
 }
+.all-cart-container {
+  width: 100%;
+  max-height: 100%;
 
-.cart-date-view-header {
-  margin-right: 256px;
-  margin-left: 10px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: thin;
 }
-
 .one-cart-container {
-  margin: 0px 40px 10px 40px;
+  margin: 0px 35px 10px 35px;
   border: 1px solid;
   border-radius: 10px;
 }
@@ -185,37 +184,34 @@ export default {
 }
 
 .cart-date-total-div {
-  width: inherit;
+  width: 100%;
   height: 30px;
 
   /* border-bottom: 1px solid; */
 
   display: flex;
   flex-direction: row;
-  /* justify-content: space-around; */
+  justify-content: space-around;
   align-items: center;
 }
 
 .btn-cart-view-details {
-  margin-left: 10px;
+  /* margin-left: 10px; */
   border: none;
   background-color: inherit;
   cursor: pointer;
 }
 
-.cart-date-view {
-  margin: 0 90px 0 5px;
-  width: 200px;
+.cart-date-view,
+.cart-total-view {
   font-size: 20px;
 }
 
 .cart-total-view {
   color: rgb(223, 14, 14);
-  font-size: 25px;
 }
 
-.one-cart-detail-container,
-.one-cart-detail-container-header {
+.one-cart-detail-container {
   width: 100%;
   height: 25px;
 
@@ -232,8 +228,19 @@ export default {
 }
 
 .one-cart-detail-container-header {
+  width: 100%;
+  height: 25px;
+
+  border-top: 1px solid rgb(131, 130, 130);
+  /* border-radius: 0 0 15px 15px; */
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  /* color: rgb(33, 33, 33); */
+  color: rgb(55, 93, 228);
+  background-color: rgb(251, 176, 176);
   font-size: 16px;
-  font-weight: bold;
+  /* font-weight: bold; */
 }
 
 .last-cart-view-element {
@@ -241,19 +248,54 @@ export default {
 }
 
 .cart-name-view {
-  /* margin-right: 100px; */
-  width: 150px;
+  width: 100%;
 }
 
 .cart-price-view,
 .cart-sum-view,
 .cart-tprice-view {
-  width: 150px;
+  width: 100%;
 }
 
 .arrowicon {
   height: 20px;
   width: 20px;
   background-color: inherit;
+}
+
+@media (max-width: 860px) {
+  .view-carts-div {
+    width: 100%;
+    margin: 0 20px 0 20px;
+  }
+}
+@media (max-width: 700px) {
+  .one-cart-container {
+    margin: 0px 15px 10px 15px;
+  }
+}
+@media (min-width: 410px) and (max-width: 700px) {
+  .cart-date-view,
+  .cart-total-view {
+    font-size: 15px;
+  }
+  .one-cart-detail-container {
+    font-size: 14px;
+  }
+  .one-cart-detail-container-header {
+    font-size: 15px;
+  }
+}
+@media (max-width: 410px) {
+  .cart-date-view,
+  .cart-total-view {
+    font-size: 14px;
+  }
+  .one-cart-detail-container {
+    font-size: 12px;
+  }
+  .one-cart-detail-container-header {
+    font-size: 14px;
+  }
 }
 </style>

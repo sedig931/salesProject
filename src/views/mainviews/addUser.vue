@@ -115,17 +115,22 @@ export default {
   methods: {
     async sendUserData() {
       try {
+        console.log("here...");
+
         this.user.photo = document.querySelector(".input-upload").files[0];
+        // uncomment next lines when you want to execute proccess..
+        // await addNewUser(this.user);
+        // this.$emit("renderMessage", "user added successfully..");
+        // setTimeout(() => {
+        //   this.$emit("renderMessage", "user added successfully..");
+        // }, 1000);
+        // this.$emit("hideNewUserForm");
+        // console.log(this.user);
 
-        await addNewUser(this.user);
-        this.$emit("renderMessage", "user added successfully..");
-
-        setTimeout(() => {
-          this.$emit("renderMessage", "user added successfully..");
-        }, 1000);
-
-        this.$emit("hideNewUserForm");
-        console.log(this.user);
+        this.$emit(
+          "renderMessage",
+          "this proccess can't complete becuase of using sub-domain"
+        );
       } catch (err) {
         console.log(err);
       }

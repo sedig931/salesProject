@@ -1,7 +1,10 @@
 export const activeUser = {};
 const authinticateManager = async function (phone, password) {
     try {
-        await fetch(`http://localhost:300/manager/auth/phone&pass`, {
+        // const url = 'http://localhost:300';
+        const url = 'https://salesserver.netlify.app/api'
+
+        await fetch(`${url}/manager/auth/phone&pass`, {
             method: 'POST',
             credentials: 'include',
             headers: {
@@ -13,23 +16,21 @@ const authinticateManager = async function (phone, password) {
                     password: password
                 }
             ),
+            // mode: 'no-cors',
             // credentials: 'include',
+        }).then(res => res.json()).then(data => {
+            activeUser.id = data._id,
+                activeUser.fname = data.fname,
+                activeUser.lname = data.lname,
+                activeUser.phone = data.phone,
+                activeUser.password = data.password
+            activeUser.address = data.address,
+                activeUser.photo = data.photo,
+                activeUser.email = data.email
+            activeUser.admin = data.admin
 
-
-        }).then(res => res.json())
-            .then(data => {
-                activeUser.id = data._id,
-                    activeUser.fname = data.fname,
-                    activeUser.lname = data.lname,
-                    activeUser.phone = data.phone,
-                    activeUser.password = data.password
-                activeUser.address = data.address,
-                    activeUser.photo = data.photo,
-                    activeUser.email = data.email
-                activeUser.admin = data.admin
-            });
+        });
     } catch (err) {
-        // console.log(err.message);
         throw err;
     }
 }

@@ -9,7 +9,9 @@
       <div class="profile-photo-div">
         <img
           class="profile-photo2"
-          :src="'http://localhost:300/uploads/' + this.activeUser.photo"
+          :src="
+            'https://salesserver.netlify.app/uploads/' + this.activeUser.photo
+          "
         />
       </div>
       <div class="user-name-div">
@@ -40,13 +42,18 @@ export default {
       this.activeUser = this.user;
     } else {
       try {
-        await fetch("http://localhost:300/get/users/info/active/user", {
-          credentials: "include",
-          method: "GET",
-          headers: {
-            "content-type": "applications-json",
-          },
-        })
+        // remove ${this.id} from url fetch when useing custome domain or local host..
+
+        await fetch(
+          `https://salesserver.netlify.app/api/get/users/info/active/user/${this.id}`,
+          {
+            credentials: "include",
+            method: "GET",
+            headers: {
+              "content-type": "applications-json",
+            },
+          }
+        )
           .then((res) => res.json())
           .then((data) => {
             this.activeUser = data;
@@ -65,20 +72,19 @@ export default {
 .back-arrow {
   position: absolute;
   display: inline-block;
-  height: 50px;
+  height: 30px;
   cursor: pointer;
 
-  left: 5px;
-  top: 5px;
+  left: 8px;
+  top: 8px;
 }
 
 .profile-container {
   display: flex;
   flex-direction: row;
   justify-content: center;
+  align-items: center;
   /* margin-top: 100px; */
-
-  background-image: var(--gradient-primary);
 
   height: 100vh;
 }
@@ -92,12 +98,11 @@ export default {
 
   height: 400px;
   width: 700px;
-  margin-top: 100px;
   background-color: rgb(230, 230, 230);
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-  border: 1.9px solid white;
+  border: 2px solid white;
 
-  border-radius: 10px;
+  border-radius: 15px;
   /* border: solid 0.5px rgb(180, 180, 180); */
 }
 
@@ -116,6 +121,7 @@ export default {
 
   border-radius: 60px;
   border: solid 2px rgb(250, 250, 250);
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
 
 .user-name-div,
@@ -126,9 +132,29 @@ export default {
   justify-content: center;
   align-items: center;
 
-  width: 200px;
+  width: 100%;
   height: 25px;
+  padding-top: 10px;
+  font-size: 19px;
   /* background-color: red; */
   /* margin-bottom: 2px; */
+}
+
+@media (min-width: 500px) and (max-width: 900px) {
+  .center-div {
+    width: 500px;
+  }
+}
+@media (max-width: 520px) {
+  .center-div {
+    width: 100%;
+    margin: 0 15px 0 15px;
+  }
+  .user-name-div,
+  .user-email-div,
+  .user-phone-div {
+    padding-top: 4px;
+    font-size: 15px;
+  }
 }
 </style>

@@ -6,13 +6,20 @@
     @renderMessage="this.showhideMessage"
     @renderProfile="this.renderProfile"
     @renderAllCarts="this.renderCarts"
+    @hideAllMenues="this.hideAllMenues"
+    @hideShowSingleMenue="this.hideShowSingleMenue"
+    @showHideUsersMenue="this.showUsersMenue = !this.showUsersMenue"
     :activeUserId="this.id"
+    :dropDownMenues="this.dropDownMenues"
+    :showUsersMenue="this.showUsersMenue"
+    :id="this.id"
   />
 
   <div
     v-if="this.ShowAllCarts || this.showProfile ? false : true"
     class="outer-main-div"
     :class="this.maindivmini ? 'outer-main-div-mini' : ''"
+    @click="this.hideAllMenues"
   >
     <div v-if="this.showMessage" class="message-div">
       <img
@@ -22,15 +29,15 @@
       />
 
       <div>
-        <p class="message-content">{{ this.message }}</p>
+        <span class="message-content">{{ this.message }}</span>
       </div>
     </div>
 
     <div class="main-div" :class="this.maindivmini ? 'main-div-mini' : ''">
-      <div class="add-cart" v-if="this.carting">
+      <div class="add-cart flex-column" v-if="this.carting">
         <button class="btn-cancel" data-goto="0" @click="clearCart">
           <img
-            class="cancel-icon"
+            class="btn-cancel2 cancel-icon"
             data-goto="0"
             src="../../icons/cancel-icon.png"
           />
@@ -38,10 +45,10 @@
 
         <div class="display-cart-info">
           <div class="cart-info-labels">
-            <P class="cart-labels">Name</P>
-            <P class="cart-labels">Price</P>
-            <P class="cart-labels">Amount</P>
-            <P class="cart-labels">Sum</P>
+            <span class="cart-labels">Name</span>
+            <span class="cart-labels">Price</span>
+            <span class="cart-labels">Amount</span>
+            <span class="cart-labels">Sum</span>
           </div>
 
           <div class="cart-info">
@@ -52,8 +59,10 @@
               :id="item.id"
               @click="this.toggleShoBox"
             >
-              <P class="cart-values cart-value-1">{{ item.name }}</P>
-              <P class="cart-values cart-value-2">{{ "$ " + item.price }}</P>
+              <span class="cart-values cart-value-1">{{ item.name }}</span>
+              <span class="cart-values cart-value-2">{{
+                "$ " + item.price
+              }}</span>
               <input
                 class="dec-amount"
                 :id="item.id"
@@ -61,7 +70,9 @@
                 :value="item.amount"
                 @change="decAmount"
               />
-              <P class="cart-values cart-value-4">{{ "$ " + item.sum }}</P>
+              <span class="cart-values cart-value-4">{{
+                "$ " + item.sum
+              }}</span>
               <img
                 src="../../icons/delete-icon.webp"
                 class="delete-icon"
@@ -73,15 +84,17 @@
 
         <div class="confirm-cart">
           <button
-            :class="this.disabled ? 'btn-disabled' : 'btn-delete'"
+            class="btn-disabled"
+            :class="this.disabled ? '' : 'btn-delete'"
             @click="delFromCart"
             :disabled="this.disabled"
           >
             Delete
           </button>
-          <p class="sum-cart-value">{{ "$ " + cartsum }}</p>
+          <span class="sum-cart-value">{{ "$ " + cartsum }}</span>
           <button
-            :class="this.carts.length > 0 ? 'btn-confirm' : 'btn-disabled'"
+            class="btn-disabled"
+            :class="this.carts.length > 0 ? 'btn-confirm' : ''"
             data-goto="0"
             @click="confirmCart"
             :disabled="this.carts.length > 0 ? false : true"
@@ -100,7 +113,10 @@
           this.carting = true;
         "
       >
-        Add +
+        <div class="new-cart-icon-span-div flex-column">
+          <i class="new-cart-icon bi bi-cart-plus-fill flex-row"></i>
+          <span class="new-cart-span"> add new cart </span>
+        </div>
       </button>
 
       <SerialStage
@@ -122,6 +138,7 @@
         "
         :btnsids="this.btnsids"
         :serialIncome="this.serialOutcome"
+        @renderMessage="this.showhideMessage"
       />
       <NewUserForm
         v-if="this.showNewUserForm"
@@ -129,6 +146,7 @@
           this.hideStages();
           this.showAddbtn = true;
         "
+        @renderMessage="this.showhideMessage"
       />
     </div>
   </div>
@@ -189,6 +207,8 @@ export default {
       productsTodelet: [], // products selected to drop from cart
       showProfile: false, // show hide profile window
       ShowAllCarts: false, // show hide all carts details window
+      dropDownMenues: [false, false, false, false, false],
+      showUsersMenue: false,
     };
   },
   setup() {},
@@ -196,6 +216,21 @@ export default {
     // console.log("cart container mounted...");
   },
   methods: {
+    hideAllMenues(e) {
+      if (!e.target.classList.contains("menu")) {
+        this.dropDownMenues = [false, false, false, false, false];
+        this.showUsersMenue = false;
+      }
+    },
+    hideShowSingleMenue(index) {
+      this.dropDownMenues[index] = !this.dropDownMenues[index];
+      this.dropDownMenues.forEach((field, i) => {
+        if (i !== index) {
+          this.dropDownMenues[i] = false;
+        }
+      });
+      this.showUsersMenue = false;
+    },
     pushtocart(cart) {
       this.hideStages();
       this.carting = true;
@@ -233,7 +268,10 @@ export default {
         cart.forEach((pro) => {
           cartforsave.serials.push({ id: pro.id, amount: pro.amount });
         });
-        await saveCart(cartforsave);
+        // await saveCart(cartforsave);
+        this.showhideMessage(
+          "this proccess can't complete becuase of using sub-domain"
+        );
         cartforsave.serials = [];
         this.clearCart();
       } catch (err) {
@@ -310,6 +348,9 @@ export default {
     showhideMessage(message = "Error") {
       this.message = message;
       this.showMessage = !this.showMessage;
+      // hide carts views
+      this.ShowAllCarts = false;
+      this.showProfile = false;
     },
     jumpToForm(serial) {
       this.hideStages();
@@ -320,30 +361,56 @@ export default {
     renderProfile(singleUser, e) {
       if (singleUser) {
         this.user = singleUser;
-        this.showProfile = true;
         this.ShowAllCarts = false;
+
+        if (this.showProfile) {
+          this.showProfile = false;
+          setTimeout(() => {
+            this.showProfile = true;
+          }, 100);
+        } else this.showProfile = true;
       } else {
         this.user = null;
-        this.showProfile = true;
         this.ShowAllCarts = false;
+
+        if (this.showProfile) {
+          this.showProfile = false;
+          setTimeout(() => {
+            this.showProfile = true;
+          }, 100);
+        } else this.showProfile = true;
       }
     },
     renderCarts() {
       this.ShowAllCarts = true;
+      this.showProfile = false;
     },
   },
 };
 </script>
 
-<style>
+<style scoped>
+.flex-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.flex-column {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
 .outer-main-div {
   /* margin-top: 100px; */
   display: flex;
   flex-direction: row;
+  align-items: center;
   justify-content: center;
 
-  background-image: var(--gradient-primary);
+  /* background-image: var(--gradient-primary); */
   height: 100vh;
+  width: 100%;
 }
 .main-div {
   display: flex;
@@ -352,22 +419,19 @@ export default {
   align-items: center;
   position: relative;
 
-  margin-top: 100px;
   width: 500px;
   height: 500px;
 
-  border: 1.9px solid white;
   border-radius: 10px 10px 10px 10px;
+  border: 2px solid white;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
   /* background-image: var(--gradient-primary-container); */
   background-color: rgb(230, 230, 230);
-  border-radius: 15px;
 }
 
 .main-div-mini {
   width: 500px;
   height: 250px;
-  margin-top: 200px;
 }
 
 .add-cart {
@@ -377,12 +441,16 @@ export default {
   position: absolute;
   top: 0;
   left: 0;
+  justify-content: space-between;
 }
 
 .display-cart-info {
   width: 100%;
-  height: 75%;
-  border-radius: 15px;
+  height: 450px;
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  align-items: center;
 }
 
 .cart-info-labels {
@@ -398,7 +466,12 @@ export default {
 }
 
 .cart-info {
-  height: 335px;
+  height: inherit;
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: thin;
 }
 
 .cart-info-values {
@@ -437,30 +510,22 @@ export default {
 
 .confirm-cart {
   width: 100%;
-  height: 10%;
-  border-radius: 15px;
+  height: 50px;
+  /* border-radius: 15px; */
   display: flex;
   justify-content: space-evenly;
   align-items: center;
+  /* background-color: red; */
 }
 
 .btn-cancel2 {
   /* background-image: var(--gradient-primary-container); */
-  background-color: rgba(86, 178, 104, 0.82);
+  /* background-color: rgba(86, 178, 104, 0.82); */
   position: absolute;
   top: 7px;
   right: 7px;
+  height: 16px;
   border: none;
-  cursor: pointer;
-}
-
-.btn-delete {
-  padding: 10px 35px 10px 35px;
-  border: 2px solid white;
-  border-radius: 10px;
-  color: white;
-  background-color: rgb(200, 50, 50);
-  font-size: 15px;
   cursor: pointer;
 }
 
@@ -470,6 +535,12 @@ export default {
   color: rgb(100, 100, 100);
   font-size: 15px;
   border-radius: 10px;
+}
+.btn-delete {
+  border: 2px solid white;
+  color: white;
+  background-color: rgb(213, 75, 75);
+  cursor: pointer;
 }
 
 .btn-delete:hover {
@@ -481,13 +552,9 @@ export default {
 }
 
 .btn-confirm {
-  padding: 10px 35px 10px 35px;
   border: 2px solid white;
-  border-radius: 10px;
   color: white;
   background-color: rgb(70, 150, 70);
-  font-size: 15px;
-
   cursor: pointer;
 }
 
@@ -496,19 +563,32 @@ export default {
 }
 
 .add-btn {
-  height: 70px;
-  width: 150px;
-  border: none;
+  height: 90px;
+  width: 120px;
+  border: 1px solid white;
   border-radius: 15px;
   cursor: pointer;
-  background-color: rgb(20, 150, 250);
+  /* background-color: rgb(20, 150, 250); */
+  background-image: var(--nav-back);
   color: white;
-  font-size: 20px;
-  transition: background-color 0.3s;
+  transition: background-image 0.3s;
+  /* transition: background-color 0.3s; */
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+.new-cart-icon-span-div {
+  height: 100%;
+  width: 100%;
+  justify-content: space-evenly;
+}
+.new-cart-icon {
+  font-size: 45px;
+}
+.new-cart-span {
+  font-size: 12px;
 }
 
 .add-btn:hover {
-  background-color: rgb(60, 190, 250);
+  background-image: var(--nav-back-lighter);
 }
 
 .dec-amount {
@@ -527,5 +607,30 @@ export default {
   position: absolute;
   top: 10px;
   right: 20px;
+}
+
+@media (min-width: 500px) and (max-width: 700px) {
+  .main-div {
+    width: 400px;
+  }
+}
+@media (max-width: 500px) {
+  .main-div {
+    width: 100%;
+    margin: 0 20px 0 20px;
+  }
+  .cart-info-labels {
+    font-size: 20px;
+  }
+  .cart-info-values {
+    font-size: 14px;
+  }
+  .btn-disabled {
+    padding: 8px 20px 8px 20px;
+    font-size: 13px;
+  }
+  .sum-cart-value {
+    font-size: 20px;
+  }
 }
 </style>

@@ -1,5 +1,6 @@
 
 export default function (e) {
+    console.log('here for show or hide spacific menue..');
 
     if (e.type === 'mouseleave' && e.target.classList.contains('delevery-div')) {
         return

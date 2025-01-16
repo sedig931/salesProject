@@ -55,12 +55,15 @@ export default {
         }
       } else {
         try {
-          await getProductData(this.serial);
+          // await getProductData(this.serial);
           // await deleteProduct(this.serial);
-          this.$emit("renderMessage", "produt deleted successfully..");
-          setTimeout(() => {
-            this.$emit("renderMessage", "produt deleted successfully..");
-          }, 1000);
+          // setTimeout(() => {
+          //   this.$emit("renderMessage", "produt deleted successfully..");
+          // }, 1000);
+          this.$emit(
+            "renderMessage",
+            "this proccess can't complete becuase of using sub-domain :("
+          );
         } catch (err) {
           this.$emit("renderMessage", "produc not found ):");
         }

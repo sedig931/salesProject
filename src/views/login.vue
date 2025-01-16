@@ -52,8 +52,8 @@ export default {
   components: {},
   data() {
     return {
-      phone: "",
-      password: "",
+      phone: "+249925735354",
+      password: "siddigjust",
       activeUser: null,
     };
   },
@@ -68,13 +68,12 @@ export default {
         this.phone = "";
         this.password = "";
         this.activeUser = active;
-
         this.$router.push({
           name: "Home",
           params: { id: active.id },
         });
       } catch (err) {
-        console.log(err.message);
+        console.log(err);
       }
     },
   },
@@ -98,7 +97,7 @@ export default {
   justify-content: center;
   align-items: center;
   /* background-image: var(--gradient-primary); */
-  background-image: var(--gradient-primary-view-img);
+  /* background-image: var(--gradient-primary-view-img); */
 
   height: 100vh;
 }
@@ -124,12 +123,14 @@ export default {
 }
 
 .inner-container-login-element {
-  width: 300px;
+  width: 100%;
+  height: 100%;
   /* margin-bottom: 5px; */
 
   display: flex;
-  align-items: center;
   flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 .row-labels-login-info,
@@ -152,8 +153,8 @@ export default {
 .input {
   /* border: 1px solid; */
   border: 1.5px solid rgb(164, 164, 164);
-  border-radius: 8px;
-
+  border-radius: 5px;
+  /* padding: 0 2px 0 2px; */
   height: 16px;
   width: 125px;
   font-size: 12px;
@@ -173,5 +174,18 @@ export default {
 }
 .btn-login:hover {
   background-image: var(--gradient-primary-btn-hover);
+}
+
+@media (min-width: 450px) and (max-width: 600px) {
+  .container-login-element {
+    width: 400px;
+    height: 350px;
+  }
+}
+@media (max-width: 450px) {
+  .container-login-element {
+    width: 100%;
+    margin: 0 15px 0 15px;
+  }
 }
 </style>

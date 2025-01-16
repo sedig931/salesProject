@@ -1,291 +1,330 @@
 <template>
-  <nav class="nav" @click="navClicked">
-    <div class="section1">
-      <div class="container-settings-menu" v-show="this.activeuser.admin">
-        <img class="sett-icon menu" src="../../icons/sett-icon.png" />
-        <div
-          class="menu-div menue-container add-hidden"
-          @mouseleave="navClicked"
-          @click="handoverBtnsEv"
-        >
-          <button
-            class="btn-add-product btn-menue btn-menue-first"
-            data-goto="2"
-            name="add-new-pro"
-            id="new"
-          >
-            add product
-          </button>
-          <button
-            class="btn-show-product btn-menue"
-            name="show-edit-delete"
-            id="show"
-          >
-            show product
-          </button>
-          <button
-            class="btn-edit-product btn-menue"
-            name="show-edit-delete"
-            id="edit"
-          >
-            edit product
-          </button>
-          <button
-            class="btn-delete-product btn-menue"
-            name="show-edit-delete"
-            id="delete"
-          >
-            delete product
-          </button>
-          <button class="btn-add-user btn-menue btn-menue-last" name="newUser">
-            add new user
-          </button>
-        </div>
-      </div>
-
-      <div class="container-icon-menu" v-show="this.activeuser.admin">
-        <img class="menu-icon menu" src="../../icons/menu-icon.png" />
-        <!-- <button class="btn-sett menu"> Settings1 </button> -->
-        <div
-          class="sett-div menue-container plus-menue add-hidden"
-          @mouseleave="navClicked"
-          @mouseenter="navClicked"
-        >
-          <button
-            class="btn-view-carts btn-menue btn-menue-first"
-            @click="this.$emit('renderAllCarts')"
-          >
-            View Carts
-          </button>
-          <button
-            class="btn-view-users btn-menue btn-menue-last"
-            @mouseenter="navClicked"
-            @mouseleave="navClicked"
-          >
-            View Users
-          </button>
-        </div>
-
-        <div
-          class="view-users-div menue-container add-hidden"
-          @mouseleave="navClicked"
-          @mouseenter="navClicked"
-        >
-          <button
-            v-for="(user, key) in users"
-            :key="user._id"
-            @click="this.hanoverUserProfile"
-            :id="user._id"
-            class="btn-view-carts btn-menue"
-            :class="
-              key === 0 && users.length === 1
-                ? 'btn-menue-first-last'
-                : '' || key === 0
-                ? 'btn-menue-first'
-                : '' || key === users.length - 1
-                ? 'btn-menue-last'
-                : ''
-            "
-          >
-            {{ user.fname }}
-            {{ user.lname }}
-          </button>
-        </div>
-      </div>
-
-      <div class="container-icon-person" @mouseleave="navClicked">
-        <img class="person-icon menu" src="../../icons/profile-icon.png" />
-        <div
-          class="menu-div person-div menue-container add-hidden"
-          @mouseleave="navClicked"
-        >
-          <img
-            :src="'http://localhost:300/uploads/' + activeuser.photo"
-            class="profile-photo"
-          />
-          <p class="user-name">{{ activeuser.fname }}</p>
-          <button
-            class="btn-profile btn-view-profile"
-            @click="this.hanoverUserProfile"
-          >
-            View Profile
-          </button>
-          <button class="btn-profile btn-logout">Logout</button>
-        </div>
-      </div>
-    </div>
-    <div class="section2">
-      <input class="search-input" type="text" v-model="this.serial" />
-      <button class="search-btn" @click="this.getCartsandsendit">
-        <img class="search-icon" src="../../icons/search-icon.png" />
-      </button>
-    </div>
-
-    <div class="section3">
-      <div class="delevery-icon-container">
-        <img class="message-icon menu" src="../../icons/delevey-icon.png" />
-
-        <div
-          class="delevery-div menue-container add-hidden add-scroll"
-          @mouseleave="navClicked"
-        >
+  <div class="outer-nav" @click="this.hideAllMenues">
+    <nav class="nav">
+      <div class="section1">
+        <div class="container-settings-menu" v-show="this.activeuser.admin">
+          <!-- <img class="sett-icon menu" src="../../icons/sett-icon.png" /> -->
+          <i
+            class="sett-icon menu bi bi-gear-fill flex-row"
+            @click="this.hideShowSingleMenue(0)"
+          ></i>
           <div
-            class="no-delCarts-Found-div row-flex-display"
-            v-show="this.cartsForDelevery[0].products.length < 1"
+            class="settings-menu-div menue-container"
+            v-show="this.dropDownMenues[0]"
+            @click="handoverBtnsEv"
           >
-            <span>No Delevery Carts</span>
+            <button
+              class="btn-add-product btn-menue btn-menue-first"
+              data-goto="2"
+              name="add-new-pro"
+              id="new"
+            >
+              add product
+            </button>
+            <button
+              class="btn-show-product btn-menue"
+              name="show-edit-delete"
+              id="show"
+            >
+              show product
+            </button>
+            <button
+              class="btn-edit-product btn-menue"
+              name="show-edit-delete"
+              id="edit"
+            >
+              edit product
+            </button>
+            <button
+              class="btn-delete-product btn-menue"
+              name="show-edit-delete"
+              id="delete"
+            >
+              delete product
+            </button>
+            <button
+              class="btn-add-user btn-menue btn-menue-last"
+              name="newUser"
+            >
+              add new user
+            </button>
           </div>
-          <div
-            class="one-dcart-div"
-            v-show="this.cartsForDelevery[0].products.length > 0"
-          >
-            <!-- ---------------------------start------------------------------ -->
+        </div>
 
-            <div class="dcart-info-div row-flex-display">
-              <span class="phone-span"
-                >{{ this.cartsForDelevery[this.currentDelCartIndex].phone }}
-              </span>
-            </div>
-            <div class="dcart-details-div">
-              <div class="cart-details-header-div row-flex-display">
-                <span class="header-txt">name</span>
-                <span class="header-txt">price</span>
-                <span class="header-txt">amount</span>
-                <span class="header-txt">total</span>
-              </div>
-              <div class="one-cart-det one-cart-det-scroll add-scroll">
-                <div
-                  class="cart-details-one-el-div row-flex-display middle-div"
-                  v-for="pro in this.cartsForDelevery[this.currentDelCartIndex]
-                    .products"
-                  :key="pro.id"
-                >
-                  <span class="pro-txt"> {{ pro.name }} </span>
-                  <span class="pro-txt"> {{ "$ " + pro.price }} </span>
-                  <span class="pro-txt"> {{ pro.amount }}</span>
-                  <span class="pro-txt">
-                    {{ "$ " + pro.price * pro.amount }}
-                  </span>
-                </div>
-              </div>
-            </div>
-            <div class="row-flex-display">
-              <div>
-                <img
-                  class="left-right-arrow prev"
-                  src="../../icons/leftarrow.png"
-                  alt=""
-                  @click="this.changeDelCart"
-                  v-show="
-                    this.cartsForDelevery[this.currentDelCartIndex - 1]
-                      ? true
-                      : false
-                  "
-                />
-              </div>
-              <span class="delcart-tprice-span">
-                {{
-                  "$ " +
-                  this.cartsForDelevery[
-                    this.currentDelCartIndex
-                  ].products.reduce(
-                    (sum, pro) => (sum += pro.price * pro.amount),
-                    (sum = 0)
-                  )
-                }}
-              </span>
-              <div>
-                <img
-                  class="left-right-arrow next"
-                  src="../../icons/rightarrow-icon.png"
-                  alt=""
-                  @click="this.changeDelCart"
-                  v-show="
-                    this.cartsForDelevery[this.currentDelCartIndex + 1]
-                      ? true
-                      : false
-                  "
-                />
-              </div>
-            </div>
-            <form
-              class="deleverd-form row-flex-display"
-              @submit.prevent="
-                this.dropCartFromList(
-                  this.cartsForDelevery[this.currentDelCartIndex]
-                    .deleveredNumber,
-                  this.cartsForDelevery[this.currentDelCartIndex]._id
-                )
+        <div
+          class="container-icon-menu flex-row"
+          v-show="this.activeuser.admin"
+        >
+          <!-- <img class="menu-icon menu" src="../../icons/menu-icon.png" /> -->
+          <i
+            class="menu-icon menu bi bi-list flex-row"
+            @click="this.hideShowSingleMenue(1)"
+          ></i>
+          <!-- <button class="btn-sett menu"> Settings1 </button> -->
+          <div
+            v-show="this.dropDownMenues[1]"
+            class="view-carts-users-menue-div menue-container plus-menue"
+          >
+            <button class="btn-menue btn-menue-first" @click="this.showAllCart">
+              View Carts
+            </button>
+            <button
+              class="btn-view-users btn-menue btn-menue-last menu"
+              @click="this.$emit('showHideUsersMenue')"
+            >
+              View Users
+            </button>
+          </div>
+
+          <div
+            class="view-users-div menue-container"
+            v-show="this.showUsersMenue"
+          >
+            <button
+              v-for="(user, key) in users"
+              :key="user._id"
+              @click="this.hanoverUserProfile"
+              :id="user._id"
+              class="btn-users"
+              :class="
+                key === 0 && users.length === 1
+                  ? 'btn-menue-first-last'
+                  : '' || key === 0
+                  ? 'btn-menue-first'
+                  : '' || key === users.length - 1
+                  ? 'btn-menue-last'
+                  : ''
               "
             >
-              <input
-                class="delevered-number-input"
-                type="text"
-                placeholder="cart delvered number"
-                required
-                v-model="this.deleveredCatNumber"
-              />
-              <button class="delevered-btn">DELEVERED</button>
-            </form>
-            <span v-show="this.showWrongNumberLabel" class="wrong-number-span">
-              Wrong number..
+              {{ user.fname }}
+              {{ user.lname }}
+            </button>
+          </div>
+        </div>
+
+        <div class="container-icon-person flex-row">
+          <!-- <img class="person-icon menu" src="../../icons/profile-icon.png" /> -->
+          <i
+            class="person-icon menu bi bi-person-fill flex-row"
+            @click="this.hideShowSingleMenue(2)"
+          ></i>
+          <div
+            class="person-div menue-container menu"
+            v-show="this.dropDownMenues[2]"
+          >
+            <img
+              :src="`https://salesserver.netlify.app/uploads/${activeuser.photo}`"
+              class="profile-photo menu"
+            />
+            <p class="user-name menu">{{ activeuser.fname }}</p>
+            <button
+              class="btn-profile btn-view-profile"
+              @click="this.hanoverUserProfile"
+            >
+              View Profile
+            </button>
+            <button class="btn-profile btn-logout" @click="this.logout">
+              Logout
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="section2">
+        <input
+          class="search-input"
+          placeholder="number betwen 1 - 5"
+          type="text"
+          v-model="this.serial"
+        />
+        <button class="search-btn flex-row" @click="this.getCartsandsendit">
+          <!-- <img class="search-icon" src="../../icons/search-icon.png" /> -->
+          <i class="search-icon bi bi-cart-plus-fill flex-row"></i>
+        </button>
+      </div>
+      <!-- section3 -->
+      <div class="section3">
+        <div class="delevery-icon-container flex-row">
+          <img
+            class="message-icon menu"
+            src="../../icons/delevey-icon-white.png"
+            @click="this.hideShowSingleMenue(3)"
+          />
+
+          <div
+            class="delevery-div menue-container add-scroll menu"
+            v-show="this.dropDownMenues[3]"
+          >
+            <div
+              class="no-delCarts-Found-div row-flex-display menu"
+              v-show="this.cartsForDelevery[0].products.length < 1"
+            >
+              <span class="menu">No Delevery Carts</span>
+            </div>
+            <div
+              class="one-dcart-div menu"
+              v-show="this.cartsForDelevery[0].products.length > 0"
+            >
+              <!-- ---------------------------start------------------------------ -->
+
+              <div class="dcart-info-div row-flex-display menu">
+                <span class="phone-span menu"
+                  >{{ this.cartsForDelevery[this.currentDelCartIndex].phone }}
+                </span>
+              </div>
+              <div class="dcart-details-div menu">
+                <div class="cart-details-header-div row-flex-display menu">
+                  <span class="header-txt menu">name</span>
+                  <span class="header-txt menu">price</span>
+                  <span class="header-txt menu">amount</span>
+                  <span class="header-txt menu">total</span>
+                </div>
+                <div class="one-cart-det one-cart-det-scroll add-scroll menu">
+                  <div
+                    class="cart-details-one-el-div row-flex-display middle-div menu"
+                    v-for="pro in this.cartsForDelevery[
+                      this.currentDelCartIndex
+                    ].products"
+                    :key="pro.id"
+                  >
+                    <span class="pro-txt menu"> {{ pro.name }} </span>
+                    <span class="pro-txt menu"> {{ "$ " + pro.price }} </span>
+                    <span class="pro-txt menu"> {{ pro.amount }}</span>
+                    <span class="pro-txt menu">
+                      {{ "$ " + pro.price * pro.amount }}
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <div class="row-flex-display menu">
+                <div>
+                  <i
+                    class="left-right-arrow prev menu bi bi-chevron-left flex-row"
+                    @click="this.changeDelCart"
+                    v-show="
+                      this.cartsForDelevery[this.currentDelCartIndex - 1]
+                        ? true
+                        : false
+                    "
+                  ></i>
+                </div>
+                <span class="delcart-tprice-span menu">
+                  {{
+                    "$ " +
+                    this.cartsForDelevery[
+                      this.currentDelCartIndex
+                    ].products.reduce(
+                      (sum, pro) => (sum += pro.price * pro.amount),
+                      (sum = 0)
+                    )
+                  }}
+                </span>
+                <div>
+                  <i
+                    class="left-right-arrow next menu bi bi-chevron-right flex-row"
+                    @click="this.changeDelCart"
+                    v-show="
+                      this.cartsForDelevery[this.currentDelCartIndex + 1]
+                        ? true
+                        : false
+                    "
+                  >
+                  </i>
+                </div>
+              </div>
+              <form
+                class="deleverd-form row-flex-display menu"
+                @submit.prevent="
+                  this.dropCartFromList(
+                    this.cartsForDelevery[this.currentDelCartIndex]
+                      .deleveredNumber,
+                    this.cartsForDelevery[this.currentDelCartIndex]._id
+                  )
+                "
+              >
+                <input
+                  class="delevered-number-input menu"
+                  type="text"
+                  placeholder="cart delvered number"
+                  required
+                  v-model="this.deleveredCatNumber"
+                />
+                <button class="delevered-btn menu">DELEVERED</button>
+              </form>
+              <span
+                v-show="this.showWrongNumberLabel"
+                class="wrong-number-span menu"
+              >
+                Wrong number..
+              </span>
+            </div>
+          </div>
+          <div
+            class="delevery-count-div flex-row menu"
+            v-if="this.cartsForDelevery[0].products.length > 0"
+          >
+            <span class="delevery-count-span menu"
+              >{{ this.cartsForDelevery.length }}
             </span>
           </div>
         </div>
-        <div
-          class="delevery-count-div"
-          v-if="this.cartsForDelevery[0].products.length > 0"
-        >
-          <span class="delevery-count-span"
-            >{{ this.cartsForDelevery.length }}
-          </span>
-        </div>
-      </div>
 
-      <div class="notification-icon-container">
-        <img
-          class="notification-icon menu"
-          src="../../icons/notification-icon.png"
-        />
-        <div
-          class="notification-div menue-container add-hidden"
-          @mouseleave="navClicked"
-        >
-          <!-- for loop to inser products -->
-
+        <div class="notification-icon-container flex-row">
+          <!-- <img
+            class="notification-icon menu"
+            src="../../icons/notification-icon.png"
+          /> -->
+          <i
+            class="notification-icon menu bi bi-bell-fill flex-row"
+            @click="this.hideShowSingleMenue(4)"
+          ></i>
           <div
-            class="not-element"
-            :class="
-              i === 0
-                ? 'not-element-first'
-                : '' || i === notiData.length - 1
-                ? 'not-element-last'
-                : ''
-            "
-            :id="not.id"
-            v-for="(not, i) in notiData"
-            :key="not.id"
+            class="notification-div menue-container"
+            v-show="this.dropDownMenues[4]"
           >
-            <div class="pro-pic-not">
-              <img
-                class="pro-pic"
-                :src="'http://localhost:300/uploads/' + not.picname"
-              />
-            </div>
-            <div class="pro-name-not">
-              <span> {{ not.name }} : inv &lt; {{ not.inv }} </span>
-            </div>
-            <div class="pro-imoje-not">
-              <img class="pro-imoje" src="../../icons/shopcar-icon.jpg" />
+            <!-- for loop to inser products -->
+
+            <div
+              class="not-element menu"
+              :class="
+                i === 0
+                  ? 'not-element-first'
+                  : '' || i === notiData.length - 1
+                  ? 'not-element-last'
+                  : ''
+              "
+              :id="not.id"
+              v-for="(not, i) in notiData"
+              :key="not.id"
+            >
+              <div class="pro-pic-not menu">
+                <img
+                  class="pro-pic menu"
+                  :src="
+                    `https://salesserver.netlify.app/uploads/` + not.picname
+                  "
+                />
+                <!-- :src="`${this.url}/uploads/` + not.picname" -->
+              </div>
+              <div class="pro-name-not menu">
+                <span class="menu">
+                  {{ not.name }} : inv &lt; {{ not.inv }}
+                </span>
+              </div>
+              <div class="pro-imoje-not menu">
+                <img
+                  class="pro-imoje menu"
+                  src="../../icons/shopcar-icon.jpg"
+                />
+              </div>
             </div>
           </div>
-        </div>
-        <div class="notification-count" v-if="notiData.length > 0">
-          {{ notiData.length }}
+          <div class="notification-count flex-row" v-if="notiData.length > 0">
+            {{ notiData.length }}
+          </div>
         </div>
       </div>
-    </div>
-  </nav>
+    </nav>
+  </div>
 </template>
 
 <script>
@@ -299,15 +338,18 @@ import {
   productsCartforDelevery,
   dropDelCart,
 } from "../../composable/modal.js";
-import { activeUser } from "../../composable/loginAuth.js";
+// import { activeUser } from "../../composable/loginAuth.js";
 
-import navController from "../../composable/navController.js";
-import { computed, onMounted, onUnmounted, ref } from "vue";
-import loginVue from "../login.vue";
+// import navController from "../../composable/navController.js";
+// import { computed, onMounted, onUnmounted, ref } from "vue";
+// import loginVue from "../login.vue";
 
 export default {
+  props: ["id", "dropDownMenues", "showUsersMenue"],
   data() {
     return {
+      url: "https://salesserver.netlify.app/api",
+      // url: "http://localhost:300",
       cartsForDelevery: [
         {
           phone: "",
@@ -318,60 +360,54 @@ export default {
       deleveredCatNumber: null,
       showDelCartCount: false,
       showWrongNumberLabel: false,
+      notiData: [],
+      singleUser: {},
+      users: [],
+      activeuser: {},
+      serial: "",
+      // dropDownMenues: [false, false, false, false, false],
+      // showUsersMenue: false,
     };
   },
   components: {},
-  setup() {
-    const notiData = ref([]);
-    const singleUser = ref({});
-    const users = ref([]);
-    const activeuser = ref({});
-    const serial = ref("");
-    const getcartList = ref(getCartList);
-
-    // get notification data from database
-    const setNotfunction = async function () {
-      try {
-        const notificationsData = await initNotifications();
-        notiData.value = notificationsData;
-      } catch (err) {
-        throw err;
-      }
-    };
+  methods: {
+    hideAllMenues(e) {
+      this.$emit("hideAllMenues", e);
+    },
+    hideShowSingleMenue(index) {
+      this.$emit("hideShowSingleMenue", index);
+    },
+    async logout() {
+      await destSession();
+      this.$router.push({
+        name: "login",
+      });
+    },
+    showAllCart() {
+      this.$emit("renderAllCarts");
+      this.dropDownMenues[1] = false;
+    },
     // get users data from data base
-    const setUsersData = async function () {
+    async setUsersData() {
       try {
         // users.value = await getUsersInfo();
-        users.value = await getUsersInfo();
+        this.users = await getUsersInfo();
       } catch (err) {
         throw err;
       }
-    };
-    return {
-      setNotfunction, /// init notification elements
-      notiData, // notification numbers
-      setUsersData, // get users data for view users list
-      users, // store users data
-      singleUser, /// get it and send to render user profile
-      activeuser, // for mini profile photo and name
-      serial,
-      getcartList, /// function from model to push single product in
-    };
-  },
-  methods: {
-    async navClicked(e) {
-      if (e.target.classList.contains("btn-logout")) {
-        await destSession();
-        this.$router.push({
-          name: "login",
-        });
-      } else {
-        navController(e);
+    },
+    // get notification data from database
+    async setNotfunction() {
+      try {
+        this.notiData = await initNotifications();
+      } catch (err) {
+        throw err;
       }
     },
     handoverBtnsEv(e) {
       // console.log(e.target.name);
       this.$emit("settBtnsFun", e);
+      this.dropDownMenues[0] = false;
     },
     hanoverUserProfile(e) {
       if (e.target.id) {
@@ -381,10 +417,13 @@ export default {
       } else {
         this.$emit("renderProfile");
       }
+      this.dropDownMenues[1] = false;
+      this.$emit("showHideUsersMenue");
+      this.dropDownMenues[2] = false;
     },
     async getCartsandsendit() {
       try {
-        await this.getcartList(this.serial);
+        await getCartList(this.serial);
         this.$emit("pushcart", cart);
         this.serial = "";
       } catch (err) {
@@ -451,65 +490,95 @@ export default {
   async mounted() {
     try {
       // get notifications data
-      await this.setNotfunction();
+      this.setNotfunction();
 
       // get users data
-      await this.setUsersData();
+      this.setUsersData();
 
       // get active user data
       // this.activeuser = activeUser;
-      await fetch("http://localhost:300/get/users/info/active/user", {
-        credentials: "include",
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      })
+      // remove ${this.id} from url fetch when useing custome domain or local host..
+      await fetch(
+        `https://salesserver.netlify.app/api/get/users/info/active/user/${this.id}`,
+        {
+          credentials: "include",
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      )
         .then((res) => res.json())
-        .then((data) => (this.activeuser = data));
+        .then((data) => {
+          this.activeuser = data;
+        });
 
       //look for delevering cart
       await this.lookForDelevery();
     } catch (err) {
       // catch error and router login page
-      this.$emit("renderMessage", "Connection Reffused :(");
-      setTimeout(() => {
-        this.$router.push({
-          name: "login",
-        });
-      }, 1000);
+      console.log(err.message);
+      console.log(err);
+
+      // this.$emit("renderMessage", "Connection Reffused :(");
+      // setTimeout(() => {
+      //   this.$router.push({
+      //     name: "login",
+      //   });
+      // }, 1000);
     }
   },
 };
 </script>
 
-<style>
-.nav {
+<style scoped>
+.flex-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.outer-nav {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
 
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
 
-  height: 40px;
-  border-bottom: 1px solid;
-  border-color: rgb(190, 190, 190);
-
-  background-color: white;
-  background-color: rgb(250, 250, 250);
+  width: 100%;
+  height: 60px;
   z-index: 30;
+}
+.nav {
+  /* position: fixed;
+  top: 0;
+  left: 0;
+  right: 0; */
+
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+
+  height: 100%;
+  width: 80%;
+  border: none;
+  border-radius: 0 0 15px 15px;
+
+  background-image: var(--nav-back);
+  /* z-index: 30; */
 }
 
 /* //////////////////////////////     1     /////////////// */
 .section1 {
   display: flex;
   flex-direction: row;
-  padding-left: 150px;
-  justify-content: space-between;
+  /* padding-left: 150px; */
+  justify-content: space-evenly;
   align-items: center;
+  width: 100%;
+  max-width: 200px;
 
   /* position: relative; */
 }
@@ -527,21 +596,30 @@ export default {
   align-items: center;
 }
 
-.btn-sett,
-.menu-icon,
+.menu-icon {
+  font-size: 30px;
+  font-weight: bold;
+  color: white;
+  cursor: pointer;
+}
+
 .person-icon {
-  height: 30px;
-  margin-right: 25px;
+  /* height: 30px; */
+  /* margin-right: 25px; */
+  font-size: 29px;
+  color: white;
   cursor: pointer;
 }
 
 .sett-icon {
-  height: 20px;
-  margin-right: 25px;
+  /* height: 20px; */
+  /* margin-right: 25px; */
+  font-size: 23px;
+  color: white;
   cursor: pointer;
 }
 
-.sett-div {
+.view-carts-users-menue-div {
   width: 100px;
   /* height: 200px; */
   background-color: rgb(230, 230, 230);
@@ -551,15 +629,15 @@ export default {
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 
   position: absolute;
-  bottom: -60px;
-  left: -20px;
+  top: 30px;
+  left: -35px;
 
   display: flex;
   flex-direction: column;
 }
 
 .view-users-div {
-  width: 150px;
+  width: 120px;
   /* height: 200px; */
   background-color: rgb(230, 230, 230);
   border: 1px solid;
@@ -569,14 +647,23 @@ export default {
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 
   position: absolute;
-  top: 59px;
-  right: -180px;
-
+  top: 60px;
+  right: -163px;
   display: flex;
   flex-direction: column;
 }
+.btn-users {
+  font-size: 12px;
+  height: 30px;
+  border: none;
+  border-bottom: solid 0.2px;
+  border-color: rgb(180, 180, 180);
+  color: rgb(77, 71, 71);
+  background-color: rgb(230, 230, 230);
+  cursor: pointer;
+}
 
-.menu-div {
+.settings-menu-div {
   width: 100px;
   /* height: 200px; */
   background-color: rgb(230, 230, 230);
@@ -595,6 +682,7 @@ export default {
 }
 
 .btn-menue {
+  /* setting menue & view carts menu */
   font-size: 12px;
   height: 30px;
   border: none;
@@ -625,12 +713,25 @@ export default {
 }
 
 .person-div {
-  bottom: -180px;
+  position: absolute;
+  top: 30px;
+  left: -50px;
+  /* bottom: -180px; */
   width: 130px;
   height: 155px;
-  left: -50px;
 
+  display: flex;
+  flex-direction: column;
   align-items: center;
+  justify-content: space-evenly;
+  /* height: 200px; */
+  background-color: rgb(230, 230, 230);
+  border: 1.5px solid;
+  border-radius: 5px;
+  border-color: rgb(180, 180, 180);
+
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+
   /* justify-content: space-evenly; */
 }
 
@@ -639,22 +740,23 @@ export default {
   width: 60px;
   margin-top: 3px;
   border: solid 1.5px;
-  border-radius: 30px;
+  border-radius: 50%;
   border-color: rgb(250, 250, 250);
 }
 
 .user-name {
   color: rgb(77, 71, 71);
   margin: 3px 0px 0px 0px;
+  font-size: 14px;
 }
 
 .btn-profile {
-  padding: 5px;
+  padding: 5px 10px 5px 10px;
   border: solid 0.5px;
   border-color: rgb(180, 180, 180);
   border-radius: 7px;
   background-color: rgb(230, 230, 230);
-  font-size: 12px;
+  font-size: 11px;
   color: rgb(77, 71, 71);
 
   margin: 4px 0 0 0;
@@ -681,13 +783,13 @@ export default {
 
 .section2 {
   flex: 1;
-  margin-left: 35px;
-  margin-right: 35px;
+  /* margin-left: 35px; */
+  /* margin-right: 35px; */
   max-width: 300px;
 
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-evenly;
   /* background-color: green; */
   /* 
     display: flex;
@@ -695,30 +797,30 @@ export default {
 }
 
 .search-icon {
-  height: 20px;
+  font-size: 20px;
+  color: #0b7ba0;
 }
 
 .search-input {
   flex: 1;
   max-width: 200px;
-  height: 25px;
-  border-width: 1px;
-  border-radius: 5px 0 0 5px;
+  height: 28px;
+  border: none;
+  border-radius: 7px;
+  text-align: center;
+  font-size: 13px;
   background-color: rgb(250, 250, 250);
-  border-color: rgb(150, 150, 150);
+  color: #0b7ba0;
+  margin-right: 4px;
 }
 
 .search-btn {
-  height: 29px;
-  width: 150px;
-  margin-left: -1px;
-  width: 40px;
-  padding: 0;
+  height: 35px;
+  width: 35px;
+  border: none;
+  border-radius: 50%;
+  border-color: white;
   cursor: pointer;
-  /* background-color: rgb(216, 19, 19); */
-  border-width: 1px;
-  border-radius: 0 5px 5px 0;
-  border-color: rgb(150, 150, 150);
 }
 
 /*///////////////////////////    3      ////////  ///////// */
@@ -726,9 +828,11 @@ export default {
 .section3 {
   display: flex;
   flex-direction: row;
-  padding-right: 150px;
-  justify-content: space-between;
+  /* padding-right: 150px; */
+  justify-content: space-evenly;
   align-items: center;
+  width: 100%;
+  max-width: 200px;
 }
 
 .delevery-icon-container {
@@ -737,8 +841,8 @@ export default {
 }
 .message-icon {
   cursor: pointer;
-  height: 25px;
-  margin-left: 25px;
+  height: 30px;
+  /* margin-left: 25px; */
 }
 
 .delevery-div {
@@ -762,6 +866,7 @@ export default {
 }
 
 .no-delCarts-Found-div {
+  font-size: 14px;
   height: 60px;
 }
 .one-dcart-div {
@@ -809,12 +914,13 @@ export default {
 }
 
 .left-right-arrow {
-  height: 21px;
+  font-weight: bold;
+  padding: 2px;
   cursor: pointer;
 }
 .left-right-arrow:hover {
   background-color: rgb(255, 255, 255);
-  border-radius: 10.5px;
+  border-radius: 50%;
 }
 .delcart-tprice-span {
   margin-top: 10px;
@@ -823,14 +929,16 @@ export default {
   /* background-color: green; */
 }
 .deleverd-form {
-  height: 40px;
+  /* height: 40px; */
+  margin-bottom: 5px;
   width: inherit;
 }
 .delevered-btn {
   /* padding: 2px 10px 2px 10px; */
   height: 20px;
+  width: 30%;
   border-radius: 7px;
-
+  font-size: 12px;
   border: none;
   color: rgb(230, 230, 230);
   background-color: rgb(38, 163, 38);
@@ -838,6 +946,10 @@ export default {
 }
 .delevered-number-input {
   height: 20px;
+  width: 60%;
+  font-size: 12px;
+  text-align: center;
+  margin: 0 3px 0 3px;
   border: none;
   border-radius: 7px;
 }
@@ -849,30 +961,32 @@ export default {
 }
 .wrong-number-span {
   position: absolute;
-  bottom: 32px;
+  bottom: 30px;
   font-family: "AR One Sans";
   color: rgb(211, 63, 71);
-  font-size: 12px;
+  font-size: 10px;
 }
 .delevery-count-div {
   position: absolute;
-  top: -7px;
-  right: -7px;
-  height: 15px;
-  width: 15px;
+  top: -9px;
+  right: -8px;
+  height: 14px;
+  width: 14px;
 
-  border: none;
-  border-radius: 7.5px;
-  text-align: center;
+  padding: 1px;
+  border: 0.5px solid white;
+  border-radius: 50%;
 
-  font-size: 12px;
+  font-size: 11px;
   color: white;
   background-color: red;
 }
 
 .notification-icon {
-  height: 23px;
-  margin-left: 25px;
+  /* height: 23px; */
+  /* margin-left: 25px; */
+  font-size: 22px;
+  color: white;
   cursor: pointer;
 }
 
@@ -884,19 +998,22 @@ export default {
 
 .notification-count {
   position: absolute;
-  top: -5px;
-  right: -5px;
+  top: -9px;
+  right: -7px;
   background-color: red;
   color: white;
 
   font-size: 11px;
   font-family: "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
-  padding-left: 5px;
+  /* padding-left: 5px;
   padding-right: 5px;
   padding-top: 2px;
-  padding-bottom: 2px;
-
-  border-radius: 10px;
+  padding-bottom: 2px; */
+  padding: 1px;
+  height: 14px;
+  width: 14px;
+  border: 0.5px solid white;
+  border-radius: 50%;
 }
 
 .notification-div {
@@ -953,7 +1070,7 @@ export default {
 .pro-pic {
   height: 35px;
   width: 35px;
-  border-radius: 25px;
+  border-radius: 50%;
   margin-right: 10px;
 }
 
@@ -985,11 +1102,174 @@ export default {
   height: 40px;
   width: 40px;
   margin-left: 10px;
-  border-radius: 25px;
-  margin-right: 20px;
+  border-radius: 50%;
+  margin-right: 10px;
 }
 
 .add-hidden {
   visibility: hidden;
+}
+
+/* -------------------------mediaa query--------------------- */
+@media (max-width: 700px) {
+  .nav {
+    width: 94%;
+  }
+}
+
+@media (max-width: 860px) {
+  .menu-icon {
+    font-size: 27px;
+  }
+
+  .person-icon {
+    font-size: 26px;
+  }
+
+  .sett-icon {
+    font-size: 19px;
+  }
+  .notification-icon {
+    font-size: 19px;
+  }
+  .notification-count {
+    height: 12px;
+    width: 12px;
+  }
+  .message-icon {
+    height: 27px;
+  }
+  .delevery-count-div {
+    height: 12px;
+    width: 12px;
+  }
+}
+@media (min-width: 530px) and (max-width: 700px) {
+  /* notifications */
+  .notification-div {
+    right: -55px;
+  }
+}
+@media (min-width: 385px) and (max-width: 530px) {
+  /* notifications */
+  .notification-div {
+    right: -30px;
+  }
+}
+@media (max-width: 385px) {
+  /* notifications */
+  .notification-div {
+    right: -20px;
+  }
+}
+@media (max-width: 700px) {
+  /* notifications */
+  .notification-div {
+    min-height: 202px;
+    width: 163px;
+  }
+  .not-element {
+    height: 30px;
+  }
+  .pro-pic {
+    height: 30px;
+    width: 30px;
+    margin-right: 3px;
+  }
+  .pro-name-not {
+    font-size: 9px;
+  }
+  .pro-imoje {
+    height: 30px;
+    width: 30px;
+    margin-left: 3px;
+    border-radius: 50%;
+    margin-right: 5px;
+  }
+}
+/* delevery div */
+/* delevery div */
+/* delevery div */
+@media (max-width: 700px) {
+  .no-delCarts-Found-div {
+    font-size: 10px;
+  }
+  .one-dcart-div {
+    font-size: 10px;
+  }
+  .delevered-number-input {
+    height: 20px;
+    width: 60%;
+    font-size: 10px;
+  }
+  .delevered-btn {
+    height: 20px;
+    width: 30%;
+    font-size: 10px;
+  }
+  .wrong-number-span {
+    bottom: 30px;
+  }
+}
+@media (min-width: 450px) and (max-width: 700px) {
+  .delevery-div {
+    right: -100px;
+    width: 200px;
+  }
+}
+@media (max-width: 450px) {
+  .delevery-div {
+    right: -60px;
+    width: 200px;
+  }
+}
+@media (min-width: 390px) and (max-width: 570px) {
+  /* settings container */
+  .settings-menu-div {
+    left: -15px;
+  }
+}
+@media (max-width: 390px) {
+  /* settings container */
+  .settings-menu-div {
+    left: -3px;
+  }
+}
+@media (max-width: 570px) {
+  /* settings & users-carts & profile */
+  .search-input {
+    width: 90px;
+  }
+  .settings-menu-div {
+    width: 82px;
+  }
+  .btn-menue {
+    font-size: 9px;
+    height: 24px;
+  }
+  .person-div {
+    width: 100px;
+    height: 140px;
+  }
+  .profile-photo {
+    height: 43px;
+    width: 43px;
+  }
+  .btn-profile {
+    font-size: 9px;
+    padding: 4px 7px 4px 7px;
+  }
+  .view-carts-users-menue-div {
+    width: 90px;
+  }
+  .view-users-div {
+    width: 100px;
+    height: 24px;
+    top: 54px;
+    right: -133px;
+  }
+  .btn-users {
+    font-size: 9px;
+  }
 }
 </style>

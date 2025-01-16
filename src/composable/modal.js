@@ -1,11 +1,11 @@
-
+const url = 'https://salesserver.netlify.app/api';
+// const url = 'http://localhost:300'
 export const initNotifications = async function () {
     const oldNotifications = [];
     try {
-        // const checked = await checkAutharized('http://localhost:300/edit/product/inv', 'GET');
 
         // if (checked) {
-        await fetch(`http://localhost:300/edit/product/inv`, {
+        await fetch(`${url}/edit/product/inv`, {
             credentials: 'include',
             method: 'GET',
             headers: {
@@ -40,10 +40,7 @@ export const initNotifications = async function () {
 export const getProductData = async function (serial) {
     let product = {};
     try {
-        // const autharized = await checkAutharized(`http://localhost:300/get/product/${serial}`, 'GET');
-        // console.log(autharized);
-        // if (autharized) {
-        await fetch(`http://localhost:300/get/product/${serial}`, {
+        await fetch(`${url}/get/product/${serial}`, {
             credentials: 'include',
             method: 'GET',
             headers: {
@@ -59,11 +56,6 @@ export const getProductData = async function (serial) {
                 product.exdate = data.expiredate;
                 product.picname = data.picname;
             });
-        // }
-        // else {
-        //     window.location.href = 'login.html';
-        //     throw new Error('unauthorized');
-        // }
     }
     catch (err) {
         err.message = 'Sorry this product not found (:';
@@ -77,7 +69,7 @@ export const getProductData = async function (serial) {
 export const getUsersInfo = async function () {
     try {
         let allUsersData = {};
-        await fetch('http://localhost:300/get/users/info/all/users',
+        await fetch(`${url}/get/users/info/all/users`,
             {
                 credentials: 'include',
                 method: 'GET',
@@ -87,6 +79,7 @@ export const getUsersInfo = async function () {
 
         return allUsersData;
     } catch (err) {
+
         throw err;
     }
 }
@@ -126,7 +119,7 @@ export const clearCart = function () {
 
 export const saveCart = async function (cart1) {
     try {
-        await fetch("http://localhost:300/save/cart", {
+        await fetch("${url}/save/cart", {
             credentials: 'include',
             method: 'POST',
             headers: {
@@ -162,9 +155,11 @@ const clearData = function (data) {
 
 export const addNewProduct = async function (newProduct) {
     try {
-        // const result = await axios.post("http://localhost:300/add/product", clearData(newProduct));
+        // const result = await axios.post("${url}/add/product", clearData(newProduct));
         let result;
-        await fetch(`http://localhost:300/add/product`, {
+        console.log(newProduct);
+
+        await fetch(`${url}/add/product`, {
             credentials: 'include',
             method: 'POST',
             headers: {
@@ -193,8 +188,8 @@ export const addNewProduct = async function (newProduct) {
 
 export const editProduct = async function (product) {
     try {
-        // const result = await axios.post("http://localhost:300/edit/product", clearData(product));
-        await fetch(`http://localhost:300/edit/product`, {
+        // const result = await axios.post("${url}/edit/product", clearData(product));
+        await fetch(`${url}/edit/product`, {
             credentials: 'include',
             method: 'POST',
             headers: {
@@ -215,7 +210,7 @@ export const editProduct = async function (product) {
 export const deleteProduct = async function (serial) {
     try {
 
-        await fetch(`http://localhost:300/delete/product/${serial}`, {
+        await fetch(`${url}/delete/product/${serial}`, {
             credentials: 'include',
             method: 'DELETE',
             headers: {
@@ -249,8 +244,8 @@ const clearDataUser = function (data) {
 
 export const addNewUser = async function (newuser) {
 
-    try {        // const result = await axios.post("http://localhost:300/add/new/user/newuser", clearData(newuser));
-        await fetch(`http://localhost:300/add/new/user/newuser`, {
+    try {        // const result = await axios.post("${url}/add/new/user/newuser", clearData(newuser));
+        await fetch(`${url}/add/new/user/newuser`, {
             credentials: 'include',
             method: 'POST',
             headers: {
@@ -273,10 +268,10 @@ export const addNewUser = async function (newuser) {
 export const getCartRecord = async function () {
     try {
         let data;
-        // const authorized = await checkAutharized('http://localhost:300/get/cart/record', 'GET');
+        // const authorized = await checkAutharized('${url}/get/cart/record', 'GET');
         // if (authorized) {
 
-        await fetch(`http://localhost:300/get/cart/record`, {
+        await fetch(`${url}/get/cart/record`, {
             credentials: 'include',
             method: 'GET',
             headers: {
@@ -298,7 +293,7 @@ export const getCartRecord = async function () {
 export const getProductDataById = async function (id) {
     let product = {};
     try {
-        await fetch(`http://localhost:300/get/product/byid/${id}`, {
+        await fetch(`${url}/get/product/byid/${id}`, {
             credentials: 'include',
             method: 'GET',
             headers: {
@@ -329,7 +324,7 @@ export const getProductDataById = async function (id) {
 }
 
 export const destSession = async function () {
-    await fetch(`http://localhost:300/destroy`, {
+    await fetch(`${url}/destroy`, {
         credentials: 'include',
         method: 'GET',
     });
@@ -340,12 +335,11 @@ export const cartForDelevery = async function () {
     try {
 
         let carts = {};
-        await fetch(`http://localhost:300/customer/get/dcart`, {
+        await fetch(`${url}/customer/get/dcart`, {
             credentials: 'include',
             method: 'GET'
         }).then(res => res.json())
             .then(data => carts = data);
-
         return carts;
     } catch (err) {
         throw err;
@@ -355,7 +349,7 @@ export const cartForDelevery = async function () {
 export const productsCartforDelevery = async function (id) {
     try {
         let product = {};
-        await fetch(`http://localhost:300/customer/get/product/${id}`, {
+        await fetch(`${url}/customer/get/product/${id}`, {
             credentials: 'include',
             method: 'GET'
         }).then(res => res.json())
@@ -373,7 +367,7 @@ export const productsCartforDelevery = async function (id) {
 export const dropDelCart = async function (id) {
     try {
         let deletedCart = {};
-        await fetch(`http://localhost:300/customer/drop/delcart/${id}`, {
+        await fetch(`${url}/customer/drop/delcart/${id}`, {
             credentials: 'include',
             method: 'DELETE'
         }).then(res => res.json())
